@@ -11,6 +11,14 @@
   root.classList.add('is-book');
   sources.forEach(function (s) { s.classList.add('src'); });
 
+  // Every page is dated yesterday, from the visitor's own clock (e.g. "Oct 20, 2026").
+  (function dateYesterday() {
+    var d = new Date();
+    d.setDate(d.getDate() - 1);
+    var text = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    arr(document.querySelectorAll('.js-date')).forEach(function (el) { el.textContent = text; });
+  })();
+
   var U = parseFloat(getComputedStyle(root).getPropertyValue('--u')) || 28;
   var stage = document.createElement('div');
   stage.className = 'stage';

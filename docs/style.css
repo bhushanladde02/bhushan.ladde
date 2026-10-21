@@ -92,7 +92,7 @@ button{font:inherit;color:inherit}
 .corner{display:flex;justify-content:flex-end;gap:18px;height:var(--u);margin-right:0}
 .corner span{position:relative;top:var(--n-corner);font-size:15px}
 .corner .lbl{font-family:var(--printface);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--print);top:var(--n-lbl)}
-.corner .val{min-width:56px;text-align:center;font-weight:400;box-shadow:0 1px 0 var(--print)}
+.corner .val{min-width:56px;white-space:nowrap;text-align:center;font-weight:400;box-shadow:0 1px 0 var(--print)}
 
 h2{font-size:21px;line-height:calc(var(--u)*2);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px}
 h2 small{font-size:16px;line-height:1;font-weight:300;margin-left:6px;color:var(--ink-soft)}
@@ -119,6 +119,17 @@ a.idx-row:hover{background:rgba(29,60,158,.05)}
 .idx-head{box-shadow:inset 0 1px 0 var(--print),inset 0 -1px 0 var(--print)}
 .idx-body{box-shadow:inset 0 -1px 0 var(--print)}
 @media (max-width:640px){.idx-row{grid-template-columns:38px 1fr 48px}.idx-row > span:nth-child(4){display:none}.idx-row > span{padding:0 4px}.idx-head .lg{display:none}.idx-head .sh{display:inline}}
+
+/* work authorization, inked like a rubber stamp (outline takes no space, so the line stays on its rule) */
+.visa{white-space:normal}
+@media (max-width:640px){.hl-rest{display:none}}
+.lead a[href^="tel:"]{white-space:nowrap}
+.stamp{display:inline-block;font-family:var(--printface);font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink);outline:1.5px solid var(--ink);outline-offset:2px;border-radius:2px;padding:0 6px;line-height:18px;
+  margin:0 8px 0 3px}
+.visa-note{font-style:italic}
+.dl a{font-weight:700;text-decoration-thickness:1.5px}
+.dl a:hover{text-decoration-style:wavy}
 
 /* about page, and the photo + name at the top of the index */
 .about,.lead{position:relative}

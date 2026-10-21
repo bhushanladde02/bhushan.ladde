@@ -7,7 +7,12 @@
   "phone": "+1 916 477 5226",
   "linkedin": "https://linkedin.com/in/bhushanladde",
   "github": "https://github.com/bhushanladde02",
+  "work_authorization": {
+    "status": "H-1B transfer",
+    "note": "already cap-counted — no lottery, file any time of year"
+  },
   "photo": "headshot.jpg",
+  "resume_pdf": "Bhushan_Ladde_Resume.pdf",
   "objective": "A senior backend or data platform role, designing reliable large-scale systems in Python and Java.",
   "pitch": "13+ years building enterprise-scale backend systems. Most recently I designed [[data pipelines that match 25M+ records in under 30 minutes]] at Nielsen.",
   "summary": [

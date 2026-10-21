@@ -64,13 +64,37 @@ def cover_lead(p: dict, photo: str) -> str:
     """Top of the index page: photo pasted in, name and how to reach me."""
     return (f'<div class="lead"><img class="photo" src="{photo}" alt="{esc(p["name"])}" width="118" height="148">'
             f'<h1 class="name">{esc(p["name"])}</h1>'
-            f'<p>{esc(p["headline"])}</p>'
+            f'<p>{headline_html(p["headline"])}</p>'
             f'<p>{esc(p.get("location", ""))}</p>'
             f'<p><a href="mailto:{esc(p["email"])}">{esc(p["email"])}</a>'
             + (f' · <a href="tel:{esc(re.sub(r"[^0-9+]", "", p["phone"]))}">{esc(p["phone"])}</a>' if p.get("phone") else "")
             + '</p>'
             f'<p><a href="{esc(p["linkedin"])}" target="_blank" rel="noopener">{esc(short_url(p["linkedin"]))}</a> · '
-            f'<a href="{esc(p["github"])}" target="_blank" rel="noopener">{esc(short_url(p["github"]))}</a></p></div>')
+            f'<a href="{esc(p["github"])}" target="_blank" rel="noopener">{esc(short_url(p["github"]))}</a></p>'
+            + work_auth(p) + download_link(p) + '</div>')
+
+
+def headline_html(headline: str) -> str:
+    """Role first; the specialty after ' · ' is dropped on phones to save lines."""
+    role, sep, rest = headline.partition(" · ")
+    return esc(role) + (f'<span class="hl-rest"> · {esc(rest)}</span>' if sep else "")
+
+
+def download_link(p: dict) -> str:
+    pdf = p.get("resume_pdf")
+    if not pdf:
+        return ""
+    return (f'<p class="dl"><a href="{esc(pdf)}" download target="_blank" rel="noopener">'
+            f'↓ Download résumé (PDF)</a></p>')
+
+
+def work_auth(p: dict) -> str:
+    """Visa line as a rubber stamp: the status, then the fact that makes it easy."""
+    w = p.get("work_authorization")
+    if not w:
+        return ""
+    return (f'<p class="visa"><span class="stamp">{esc(w["status"])}</span> '
+            f'<span class="visa-note">{esc(w.get("note", ""))}</span></p>')
 
 
 def about_body(p: dict) -> str:
@@ -141,7 +165,7 @@ def cover_note_body(p: dict) -> str:
 def declaration_body(p: dict) -> str:
     place = p.get("location", "").split(",")[0]
     return (f'<p class="para">{esc(p.get("declaration", ""))}</p><div class="gap"></div><div class="gap"></div>'
-            f'<div class="sign"><div><p>Place: {esc(place)}</p><p>Date: {esc(p["updated"])}</p></div>'
+            f'<div class="sign"><div><p>Place: {esc(place)}</p><p>Date: <span class="js-date">{esc(p["updated"])}</span></p></div>'
             f'<div class="sig"><p class="scrawl">{esc(p["name"])}</p><p>({esc(p["name"])})</p></div></div>')
 
 
@@ -177,14 +201,14 @@ def build_pages(p: dict, photo: str) -> list[dict]:
     return pages
 
 
-def index_body(pages: list[dict]) -> str:
+def index_body(pages: list[dict], updated: str = "") -> str:
     def row(sr, text, goto, anchor, page_no, date, cls="", extra=""):
         href = f"#{anchor or pages[goto]['token']}"
         more = f'<i class="lg"> · {esc(extra)}</i>' if extra else ""
         return (f'<a class="idx-row{cls}" href="{href}" data-goto="{goto}"'
                 + (f' data-anchor="{anchor}"' if anchor else "") + '>'
                 f'<span>{sr}</span><span>{esc(text)}{more}</span><span class="pno">{page_no}</span>'
-                f'<span>{esc(date)}</span></a>')
+                + (f'<span class="js-date">{esc(date)}</span></a>' if date == updated else f'<span>{esc(date)}</span></a>'))
 
     rows = []
     for pg in pages[1:]:
@@ -195,7 +219,7 @@ def index_body(pages: list[dict]) -> str:
     return f'<nav class="idx" aria-label="Index">{head}<div class="idx-body">{"".join(rows)}</div></nav>'
 
 
-def render_page(pg: dict, pages: list[dict]) -> str:
+def render_page(pg: dict, pages: list[dict], fallback_date: str = "") -> str:
     n = pg["number"]
     corner_no = "Index" if n == 0 else str(n)
     heading = "INDEX" if n == 0 else esc(pg["title"])
@@ -211,7 +235,7 @@ def render_page(pg: dict, pages: list[dict]) -> str:
         f'    <section class="page" id="{pg["token"]}" data-token="{pg["token"]}" data-title="{esc(pg["title"])}" '
         f'aria-label="{esc(pg["title"])}">\n'
         f'      <div class="corner"><span class="lbl">Page No.</span><span class="val">{corner_no}</span>'
-        f'<span class="lbl">Date</span><span class="val">{esc(pg["date"])}</span></div>\n'
+        f'<span class="lbl">Date</span><span class="val js-date">{esc(fallback_date)}</span></div>\n'
         + (f'      {pg["lead"]}\n' if pg.get("lead") else "")
         + f'      <h2>{heading}</h2>\n'
         f'      {pg["body"]}\n'
@@ -238,8 +262,8 @@ def render(profile: dict, *, inline: bool = False) -> str:
         photo = esc(profile["photo"])
 
     pages = build_pages(profile, photo)
-    pages[0]["body"] = index_body(pages)
-    html_pages = "\n".join(render_page(pg, pages) for pg in pages)
+    pages[0]["body"] = index_body(pages, profile["updated"])
+    html_pages = "\n".join(render_page(pg, pages, profile["updated"]) for pg in pages)
 
     values = {
         "NAME": esc(profile["name"]),
@@ -266,6 +290,8 @@ def build(out_dir: Path = DOCS) -> Path:
     shutil.copyfile(STATIC / "notebook.js", out_dir / "notebook.js")
     shutil.copytree(STATIC / "fonts", out_dir / "fonts", dirs_exist_ok=True)
     shutil.copyfile(ASSETS / profile["photo"], out_dir / profile["photo"])
+    if profile.get("resume_pdf"):
+        shutil.copyfile(ASSETS / profile["resume_pdf"], out_dir / profile["resume_pdf"])
     (out_dir / ".nojekyll").write_text("", encoding="utf-8")
     return out_dir / "index.html"
 

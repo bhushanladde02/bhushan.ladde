@@ -132,7 +132,7 @@ def test_all_content_appears(page, profile):
 
 def test_build_writes_site(tmp_path):
     index = b.build(tmp_path)
-    for name in ["index.html", "style.css", "notebook.js", "headshot.jpg", ".nojekyll",
+    for name in ["index.html", "style.css", "notebook.js", "headshot.jpg", ".nojekyll", "Bhushan_Ladde_Resume.pdf",
                  "fonts/kalam-latin-300-normal.woff2"]:
         assert (tmp_path / name).exists(), name
     text = index.read_text(encoding="utf-8")
@@ -163,3 +163,30 @@ def test_cover_note_closes_the_notebook(page, profile):
     assert b.esc(n["greeting"]) in note and b.esc(n["closing"]) in note
     for line in n["bring"]:
         assert b.esc(line) in note
+
+
+def test_work_authorization_stamp_on_the_index_page(page, profile):
+    index_page = page.split('data-token="about"')[0]
+    w = profile["work_authorization"]
+    assert f'<span class="stamp">{b.esc(w["status"])}</span>' in index_page
+    assert b.esc(w["note"]) in index_page
+
+
+def test_resume_pdf_download_on_the_index_page(page, profile):
+    index_page = page.split('data-token="about"')[0]
+    assert f'href="{profile["resume_pdf"]}" download' in index_page
+    assert (b.ASSETS / profile["resume_pdf"]).read_bytes()[:5] == b"%PDF-"
+
+
+def test_stamp_is_straight():
+    css = (b.STATIC / "style.css").read_text(encoding="utf-8")
+    stamp = css[css.index(".stamp{"):css.index("}", css.index(".stamp{"))]
+    assert "rotate" not in stamp
+
+
+def test_every_page_is_dated_by_the_script(page, pages):
+    corners = re.findall(r'<span class="lbl">Date</span><span class="val js-date">([^<]*)</span>', page)
+    assert len(corners) == len(pages)          # index included
+    assert 'Date: <span class="js-date">' in page  # declaration
+    js = (b.STATIC / "notebook.js").read_text(encoding="utf-8")
+    assert "getDate() - 1" in js and ".js-date" in js

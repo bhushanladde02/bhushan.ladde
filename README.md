@@ -16,7 +16,7 @@ of a page.
 
 | Section | Contents |
 |---------|----------|
-| Index | My photo, name, title and contact details (email, phone, LinkedIn, GitHub), then Sr. No., contents, page numbers and dates |
+| Index | My photo, name, title, contact details (email, phone, LinkedIn, GitHub) a work-authorization stamp (`work_authorization` in `profile.json`) and a link to download my PDF résumé, then Sr. No., contents, page numbers and dates |
 | About Me | Career objective, professional summary, highlights |
 | Work Experience | Every role, newest first, each with a one-line heading and its strongest points |
 | Projects | Live and in-progress projects with a tick box for each |
@@ -28,6 +28,10 @@ On a laptop the notebook lies open, showing two facing pages with the binding do
 4–5 views in all); on a phone it shows one page at a time. Page numbers in each corner and in the index
 follow how the pages actually fall on that screen.
 
+Dates: the Date box on every page (and the declaration) always shows yesterday's date, worked out from
+the visitor's clock when the page opens (`.js-date` in the HTML, filled by `static/notebook.js`). The build
+writes the `updated` month there as a fallback for readers without JavaScript.
+
 Reading it: the bar under the pages always names what comes next ("Next: Work Experience →"); the
 ← / → keys and a swipe on phones do the same, and each index row opens its page. Every section has its
 own link, e.g. `…/bhushan.ladde/#projects`, and each job too, e.g. `#role-nielsen`.
@@ -38,6 +42,7 @@ Without JavaScript the sections simply stack down the screen.
 ```
 content/profile.json   ← edit this: everything written in the notebook
 assets/headshot.jpg    ← profile photo (pasted at the top of the Index page)
+assets/Bhushan_Ladde_Resume.pdf ← downloadable résumé; swap the file to update it (`resume_pdf` in profile.json)
 templates/index.html   ← the notebook shell: binding and pages
 static/style.css       ← binding, ruled pages, red margin, blue ink, two-page spread
 static/notebook.js     ← flows sections onto equal pages, spreads, live page numbers, next bar, keys, swipe

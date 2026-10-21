@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{NAME}} Résumé</title>
+<meta name="description" content="{{NAME}} — {{HEADLINE}}">
+{{STYLE}}
+</head>
+<body>
+<main class="sheet">
+  <img class="photo" src="{{PHOTO}}" alt="{{NAME}}" width="112" height="140">
+
+  <p class="doc-title">RESUME</p>
+
+  <header class="head">
+    <h1>{{NAME}}</h1>
+    <p>{{HEADLINE}}</p>
+    <p>{{LOCATION}}</p>
+    <p>Email: <a href="mailto:{{EMAIL}}">{{EMAIL}}</a></p>
+    <p>LinkedIn: <a href="{{LINKEDIN}}" target="_blank" rel="noopener">{{LINKEDIN_SHORT}}</a></p>
+    <p>GitHub: <a href="{{GITHUB}}" target="_blank" rel="noopener">{{GITHUB_SHORT}}</a></p>
+  </header>
+
+  <section>
+    <h2><span class="no">1.</span>Career Objective :-</h2>
+    <p class="para">{{OBJECTIVE}}</p>
+  </section>
+
+  <section>
+    <h2><span class="no">2.</span>Professional Summary :-</h2>
+    <p class="para">{{PITCH}}</p>
+    <ul class="pts">
+{{ACHIEVEMENTS}}
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="no">3.</span>Work Experience :-</h2>
+{{EXPERIENCE}}
+  </section>
+
+  <section>
+    <h2><span class="no">4.</span>Projects :-</h2>
+    <ol class="projects">
+{{PROJECTS}}
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="no">5.</span>Technical Skills :-</h2>
+    <dl class="kv">
+{{SKILLS}}
+    </dl>
+  </section>
+
+  <section>
+    <h2><span class="no">6.</span>Educational Qualifications :-</h2>
+    <div class="table-wrap">
+      <div class="edu" role="table" aria-label="Educational qualifications">
+        <div class="tr th" role="row"><span role="columnheader"><i>Qualification</i></span><span role="columnheader"><i>University / College</i></span><span role="columnheader"><i>Year</i></span><span role="columnheader"><i>Result</i></span></div>
+{{EDUCATION}}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">7.</span>Certifications &amp; Awards :-</h2>
+    <ul class="pts">
+{{AWARDS}}
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="no">8.</span>Declaration :-</h2>
+    <p class="para">{{DECLARATION}}</p>
+    <div class="sign">
+      <div><p>Place: {{PLACE}}</p><p>Date: {{UPDATED}}</p></div>
+      <div class="sig"><p class="scrawl">{{SIGNATURE}}</p><p>({{NAME}})</p></div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

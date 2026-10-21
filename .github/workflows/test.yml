@@ -1,0 +1,20 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - run: python -m pytest -q
+      - name: docs/ is up to date with content
+        run: |
+          python -m webport build
+          git diff --exit-code docs/ || (echo "Run 'python -m webport build' and commit docs/" && exit 1)

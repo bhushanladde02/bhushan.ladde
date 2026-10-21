@@ -1,0 +1,14 @@
+[project]
+name = "bhushan-profile-webport"
+version = "0.1.0"
+description = "Static notebook-style résumé site for Bhushan Ladde, built from one JSON file."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Bhushan Ladde", email = "bhushanladde02@gmail.com" }]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -2,7 +2,7 @@
 
 My personal résumé site, written in blue ink on a ruled exam answer sheet, laid out like a classic résumé
 (objective, experience, skills, qualifications table, declaration).
-Live at **https://bhushanladde02.github.io/bhushan_profile_webport/** once GitHub Pages is on (see below).
+Live at **https://bhushanladde02.github.io/bhushan.ladde/** once GitHub Pages is on (see below).
 
 All content lives in one file, `content/profile.json`. A small Python script (standard library only)
 renders it into a static site in `docs/`, which GitHub Pages serves.
@@ -55,9 +55,9 @@ which takes no space. Kalam's baseline sits 20px into each line, so text is nudg
 
 ## Publishing on GitHub Pages
 
-1. Push this repo to `github.com/bhushanladde02/bhushan_profile_webport` (public).
+1. Push this repo to `github.com/bhushanladde02/bhushan.ladde` (public).
 2. Repo **Settings → Pages → Build and deployment**: Source *Deploy from a branch*, Branch `main`, folder `/docs`, **Save**.
-3. The site appears at `https://bhushanladde02.github.io/bhushan_profile_webport/`.
+3. The site appears at `https://bhushanladde02.github.io/bhushan.ladde/`.
 
 The `test` workflow in `.github/workflows/` runs the tests on every push and fails if `docs/` was not rebuilt
 after a content change.

@@ -9,19 +9,20 @@ renders it into a static site in `docs/`, which GitHub Pages serves.
 
 ## What's in the notebook
 
-Five sections after the index. Every page is the same size and nothing scrolls: when a section has more
+Six sections after the index. Every page is the same size and nothing scrolls: when a section has more
 writing than one page holds, it carries over to the next page under "(contd.)", the way you would write
 in a real notebook. A job is never split across pages, and a heading is never left alone at the foot
 of a page.
 
 | Section | Contents |
 |---------|----------|
-| Index | My photo, name, title and contact details, then Sr. No., contents, page numbers and dates |
+| Index | My photo, name, title and contact details (email, phone, LinkedIn, GitHub), then Sr. No., contents, page numbers and dates |
 | About Me | Career objective, professional summary, highlights |
 | Work Experience | Every role, newest first, each with a one-line heading and its strongest points |
 | Projects | Live and in-progress projects with a tick box for each |
 | Technical Skills | Grouped skills |
 | Education & Awards | Qualifications table, awards, and the signed declaration |
+| Cover Note | A short, signed note to the hiring manager: what I bring (`cover_note` in `profile.json`) |
 
 On a laptop the notebook lies open, showing two facing pages with the binding down the middle (about
 4–5 views in all); on a phone it shows one page at a time. Page numbers in each corner and in the index

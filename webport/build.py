@@ -66,7 +66,9 @@ def cover_lead(p: dict, photo: str) -> str:
             f'<h1 class="name">{esc(p["name"])}</h1>'
             f'<p>{esc(p["headline"])}</p>'
             f'<p>{esc(p.get("location", ""))}</p>'
-            f'<p><a href="mailto:{esc(p["email"])}">{esc(p["email"])}</a></p>'
+            f'<p><a href="mailto:{esc(p["email"])}">{esc(p["email"])}</a>'
+            + (f' · <a href="tel:{esc(re.sub(r"[^0-9+]", "", p["phone"]))}">{esc(p["phone"])}</a>' if p.get("phone") else "")
+            + '</p>'
             f'<p><a href="{esc(p["linkedin"])}" target="_blank" rel="noopener">{esc(short_url(p["linkedin"]))}</a> · '
             f'<a href="{esc(p["github"])}" target="_blank" rel="noopener">{esc(short_url(p["github"]))}</a></p></div>')
 
@@ -127,6 +129,15 @@ def awards_body(p: dict) -> str:
     return bullets(p.get("awards", []), lambda a: esc(a[0]) + (f" ({esc(a[1])})" if a[1] else ""))
 
 
+def cover_note_body(p: dict) -> str:
+    n = p["cover_note"]
+    paras = "".join(f'<p class="para">{esc(t)}</p>' for t in n.get("paragraphs", []))
+    return (f'<p>{esc(n.get("greeting", ""))}</p>{paras}'
+            f'<div class="gap"></div><h3>{esc(n.get("bring_title", ""))}</h3>{bullets(n.get("bring", []))}'
+            f'<div class="gap"></div><p class="para">{esc(n.get("closing", ""))}</p>'
+            f'<div class="note-sign"><p>{esc(n.get("signoff", ""))}</p><p class="scrawl">{esc(p["name"])}</p></div>')
+
+
 def declaration_body(p: dict) -> str:
     place = p.get("location", "").split(",")[0]
     return (f'<p class="para">{esc(p.get("declaration", ""))}</p><div class="gap"></div><div class="gap"></div>'
@@ -151,6 +162,9 @@ def build_pages(p: dict, photo: str) -> list[dict]:
         {"token": "skills", "title": "Technical Skills", "date": p["updated"], "body": skills_body(p)},
         {"token": "education", "title": "Education & Awards", "date": p["updated"], "body": edu_body},
     ]
+    if p.get("cover_note"):
+        pages.append({"token": "note", "title": p["cover_note"].get("title", "Cover Note"),
+                      "date": p["updated"], "body": cover_note_body(p)})
     seen = set()
     for n, page in enumerate(pages):
         page["number"] = n

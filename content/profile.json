@@ -4,6 +4,7 @@
   "updated": "Oct 2026",
   "location": "Folsom, CA · San Francisco Bay Area, CA",
   "email": "bhushanladde02@gmail.com",
+  "phone": "+1 916 477 5226",
   "linkedin": "https://linkedin.com/in/bhushanladde",
   "github": "https://github.com/bhushanladde02",
   "photo": "headshot.jpg",
@@ -255,5 +256,22 @@
       ""
     ]
   ],
-  "declaration": "I hereby declare that the information given above is true to the best of my knowledge and belief."
+  "declaration": "I hereby declare that the information given above is true to the best of my knowledge and belief.",
+  "cover_note": {
+    "title": "Cover Note",
+    "greeting": "Dear Hiring Manager,",
+    "paragraphs": [
+      "You have made it to the last page — patience like that deserves a good engineer. Let me introduce one.",
+      "For 13+ years I've built systems that must be right and on time: 25M+ records matched before a 30-minute deadline, $1M+ a day of banking at 99.99% accuracy, and software running on 50,000+ devices around the world."
+    ],
+    "bring_title": "What I'll bring :-",
+    "bring": [
+      "Pipelines that finish before the coffee does.",
+      "Failure cases designed in first, not patched in later.",
+      "Ownership from the first design doc to the 2 a.m. alert.",
+      "AI in my toolkit, judgement in my hands."
+    ],
+    "closing": "If your data has a deadline, I'd love to hear about it.",
+    "signoff": "Warm regards,"
+  }
 }

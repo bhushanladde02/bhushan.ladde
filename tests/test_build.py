@@ -47,7 +47,7 @@ def test_html_parses_and_tags_balance(page):
 
 
 def test_notebook_opens_on_the_index_then_section_pages(page):
-    assert tokens(page) == ["index", "about", "experience", "projects", "skills", "education"]
+    assert tokens(page) == ["index", "about", "experience", "projects", "skills", "education", "note"]
 
 
 def test_index_lists_every_section_once(page, pages):
@@ -149,3 +149,17 @@ def test_photo_and_name_open_the_index_page(page):
     index_page = page.split('data-token="about"')[0]
     assert index_page.index('class="photo"') < index_page.index("<h2>INDEX</h2>")
     assert page.count('class="photo"') == 1
+
+
+def test_phone_is_on_the_index_page(page, profile):
+    index_page = page.split('data-token="about"')[0]
+    assert profile["phone"] in index_page
+    assert 'href="tel:+19164775226"' in index_page
+
+
+def test_cover_note_closes_the_notebook(page, profile):
+    note = page.split('data-token="note"')[1]
+    n = profile["cover_note"]
+    assert b.esc(n["greeting"]) in note and b.esc(n["closing"]) in note
+    for line in n["bring"]:
+        assert b.esc(line) in note

@@ -1,107 +1,190 @@
-/* Handwritten résumé on an exam answer sheet.
-   Rule: every line box is 32px (or 64px) tall and every gap is a multiple of 32px,
-   so all writing sits on the printed lines. Nothing in the flow may add borders or
-   odd padding on top/bottom; decorative lines use box-shadow, which takes no space. */
+/* Old-school notebook résumé: cloth-bound spine, ruled pages, blue ballpoint, red margin.
+   Writing rule: every line box is 32px (headings 64px) and every vertical gap is a
+   multiple of 32px, so all writing sits on the printed lines. No top/bottom borders,
+   margins or padding that break the 32px rhythm inside a page; decorative lines use
+   box-shadow or pseudo-elements, which take no space. */
 @font-face{font-family:"Kalam";font-style:normal;font-weight:300;font-display:swap;src:url(fonts/kalam-latin-300-normal.woff2) format("woff2")}
 @font-face{font-family:"Kalam";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/kalam-latin-400-normal.woff2) format("woff2")}
 @font-face{font-family:"Kalam";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/kalam-latin-700-normal.woff2) format("woff2")}
 @font-face{font-family:"Caveat";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/caveat-latin-600-normal.woff2) format("woff2")}
 
 :root{
-  --paper:#FFFFFF; --desk:#F3F4F6;
-  --ink:#1D3C9E;          /* blue ballpoint */
-  --ink-soft:#4A63B3;     /* same ink, lighter pressure */
-  --rule:#B7CDEB;         /* printed blue lines */
-  --margin:#DD7373;       /* red margin */
-  --u:32px;
+  --desk:#ECEEF2;
+  --binding:#26324D; --binding-light:#3A4868;   /* cloth binding tape */
+  --paper:#FFFFFF; --paper-edge:#E9ECF2;
+  --ink:#1D3C9E;            /* blue ballpoint */
+  --ink-soft:#4A63B3;       /* lighter pressure */
+  --print:#8A9CC4;          /* printed labels on the page */
+  --rule:#B7CDEB;           /* printed blue lines */
+  --margin:#DD7373;         /* red margin */
+  --u:28px;
+  --n1:7px; --n-h2:20px; --n-name:17px; --n-stat:12px; --n-sign:0px; --n-corner:7px; --n-lbl:5px;  /* measured: puts each size of writing on its rule */
   --hand:"Kalam","Segoe Print","Bradley Hand","Comic Neue",cursive;
   --sign:"Caveat","Segoe Script","Bradley Hand",cursive;
-  --pad-left:112px; --margin-x:84px;
-  color-scheme:light;
+  --printface:"Helvetica Neue",Arial,sans-serif;
+  --pad-left:104px; --margin-x:80px;
+    color-scheme:light;
 }
-@media (max-width:640px){:root{--pad-left:52px;--margin-x:36px}}
+@media (max-width:640px){:root{--pad-left:50px;--margin-x:36px}}
 
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--desk);color:var(--ink);font-family:var(--hand);font-weight:300;font-size:18px;line-height:var(--u);
-  padding-block:24px 48px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
-@media (max-width:640px){body{font-size:16.5px;padding-block:0;padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}}
-h1,h2,p,ul,ol,dl,dd,dt{margin:0;padding:0}
+body{background:var(--desk);color:var(--ink);font-family:var(--hand);font-weight:300;font-size:16.5px;line-height:var(--u);
+  padding-block:20px 28px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+@media (max-width:640px){body{font-size:15.5px;padding-block:8px 16px;padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px))}}
+h1,h2,h3,p,ul,ol,dl,dd,dt{margin:0;padding:0}
 ul,ol{list-style:none}
-b,strong,h1,h2{font-weight:700}
+b,strong,h1,h2,h3{font-weight:700}
 a{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
-a:focus-visible{outline:2px dashed var(--ink);outline-offset:2px}
-/* Sit the ink on the printed line. Kalam's baseline lands 20px into each 32px line box;
-   shifting text 9px (visual only, no layout change) puts it just above the rule.
-   Two-line items (64px box) get a larger shift so their baseline meets the lower rule. */
-.sheet :is(p,li,h1,h2,dt,dd,.job-top){position:relative;top:9px}
-.sheet h2{top:24px}
-.sheet .head h1{top:20px}
-.sheet .doc-title{top:22px}
-.sheet .scrawl{top:20px}
-.tr span > i{font-style:normal;position:relative;top:9px}
-
+:focus-visible{outline:2px dashed var(--ink);outline-offset:2px}
 mark{background:none;color:inherit;font-weight:400;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:5px}
+button{font:inherit;color:inherit}
 
-/* the answer sheet */
-.sheet{position:relative;max-width:880px;margin:0 auto;background-color:var(--paper);
-  padding:calc(var(--u)*2) 40px calc(var(--u)*3) var(--pad-left);
+/* ---------- the notebook: white pages bound with cloth tape on the left ---------- */
+.notebook{position:relative;max-width:860px;margin:0 auto;padding-left:30px;
+  filter:drop-shadow(0 1px 2px rgba(20,30,60,.12)) drop-shadow(0 14px 22px rgba(20,30,60,.12))}
+.binding{position:absolute;left:0;top:0;bottom:0;width:34px;border-radius:5px 0 0 5px;z-index:2;
+  background:
+    repeating-linear-gradient(to bottom,transparent 0 9px,rgba(255,255,255,.55) 9px 17px) 22px 0/1.5px 100% no-repeat,
+    linear-gradient(to right,var(--binding) 0 60%,var(--binding-light) 85%,var(--binding) 100%)}
+@media (max-width:640px){.notebook{padding-left:16px}.binding{width:20px;background:
+    repeating-linear-gradient(to bottom,transparent 0 9px,rgba(255,255,255,.55) 9px 17px) 13px 0/1.5px 100% no-repeat,
+    linear-gradient(to right,var(--binding) 0 60%,var(--binding-light) 85%,var(--binding) 100%)}}
+.book{position:relative}
+/* the edges of the pages underneath, on the right */
+.book::after{content:"";position:absolute;top:3px;bottom:-3px;right:-4px;width:4px;border-radius:0 3px 3px 0;z-index:-1;
+  background:repeating-linear-gradient(to right,var(--paper) 0 1px,var(--paper-edge) 1px 2px)}
+
+/* ---------- a page ---------- */
+.page{position:relative;background-color:var(--paper);border-radius:0 6px 6px 0;min-height:calc(var(--u) * 24);
+  padding:var(--u) 28px var(--u) var(--pad-left);
   background-image:
     linear-gradient(to right,transparent calc(var(--margin-x) - 6px),var(--margin) calc(var(--margin-x) - 6px) calc(var(--margin-x) - 4.5px),transparent calc(var(--margin-x) - 4.5px) calc(var(--margin-x) - 1.5px),var(--margin) calc(var(--margin-x) - 1.5px) var(--margin-x),transparent var(--margin-x)),
     linear-gradient(to bottom,transparent calc(var(--u) - 1px),var(--rule) calc(var(--u) - 1px));
-  background-size:100% 100%,100% var(--u);
-  box-shadow:0 1px 2px rgba(29,60,158,.08),0 10px 30px -12px rgba(29,60,158,.22)}
-@media (max-width:640px){.sheet{padding-right:16px;box-shadow:none}}
+  background-size:100% 100%,100% var(--u);background-attachment:local,local}
+.page + .page{margin-top:var(--u)}
+/* ---------- notebook view (script on): fixed-size pages, never scrolled ---------- */
+.is-book .src{display:none}
+.stage{display:flex;flex-wrap:wrap;position:relative}
+.is-book .page.sheet{flex:0 0 100%;height:calc(var(--u) * var(--lines, 24));min-height:0;margin:0;overflow:hidden}
+.spread .page.sheet{flex-basis:50%}
+/* two facing pages: the fold in the middle */
+.spread .notebook{max-width:1320px;padding-left:0}
+.spread .stage .sheet:nth-child(odd){border-radius:6px 0 0 6px;box-shadow:inset -18px 0 18px -16px rgba(20,30,60,.22)}
+.spread .stage .sheet:nth-child(even){border-radius:0 6px 6px 0;box-shadow:inset 18px 0 18px -16px rgba(20,30,60,.22)}
+.spread .binding{left:50%;width:18px;transform:translateX(-50%);border-radius:2px;
+  background:
+    repeating-linear-gradient(to bottom,transparent 0 9px,rgba(255,255,255,.6) 9px 17px) 8px 0/1.5px 100% no-repeat,
+    linear-gradient(to right,var(--binding),var(--binding-light) 50%,var(--binding))}
+.spread .book::before{content:"";position:absolute;top:3px;bottom:-3px;left:-4px;width:4px;border-radius:3px 0 0 3px;z-index:-1;
+  background:repeating-linear-gradient(to left,var(--paper) 0 1px,var(--paper-edge) 1px 2px)}
+.is-book .turn{display:none}
+@media (max-width:640px){.page{padding-right:12px}}
 
-/* pasted passport photo */
-.photo{position:absolute;top:calc(var(--u)*4);right:40px;width:112px;height:140px;object-fit:cover;object-position:50% 25%;
-  border:4px solid #fff;box-shadow:0 0 0 1px rgba(29,60,158,.25),0 4px 10px -4px rgba(0,0,0,.3);transform:rotate(1.5deg)}
-@media (max-width:640px){.photo{top:calc(var(--u)*4);right:14px;width:80px;height:100px;border-width:3px}}
+/* Sit the ink on the printed line: Kalam's baseline lands 20px into a 32px line box,
+   so text is nudged 9px down (visual only). 64px items get a larger nudge. */
+.page :is(p,li,dt,dd,.idx-row > span,.stat span){position:relative;top:var(--n1)}
+.page h2{position:relative;top:var(--n-h2)}
+.page .name{position:relative;top:var(--n-name)}
+.page .scrawl{position:relative;top:var(--n-sign)}
 
-.doc-title{text-align:center;font-weight:700;font-size:26px;line-height:calc(var(--u)*2);letter-spacing:.35em;
-  text-decoration:underline double;text-decoration-thickness:1px;text-underline-offset:4px}
+/* corner box printed on every page: Page No. ___ Date ___ */
+.corner{display:flex;justify-content:flex-end;gap:18px;height:var(--u);margin-right:0}
+.corner span{position:relative;top:var(--n-corner);font-size:15px}
+.corner .lbl{font-family:var(--printface);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--print);top:var(--n-lbl)}
+.corner .val{min-width:56px;text-align:center;font-weight:400;box-shadow:0 1px 0 var(--print)}
 
-.head{padding-right:160px}
-@media (max-width:640px){.head{padding-right:96px}}
-.head h1{font-size:34px;line-height:calc(var(--u)*2)}
-@media (max-width:640px){.head h1{font-size:26px}}
-.head p{overflow-wrap:anywhere}
-
-section{margin-top:var(--u)}
-h2{position:relative;font-size:21px;line-height:calc(var(--u)*2);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px}
-h2 .no{position:absolute;right:100%;margin-right:calc(var(--pad-left) - var(--margin-x) + 10px);text-decoration:none;font-weight:400;display:inline-block}
-@media (max-width:640px){h2{font-size:19px}}
+h2{font-size:21px;line-height:calc(var(--u)*2);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px}
+h2 small{font-size:16px;line-height:1;font-weight:300;margin-left:6px;color:var(--ink-soft)}
+.sub{color:var(--ink-soft);font-style:italic}
 .para{text-indent:2.2em}
 
-.pts li,.job li{position:relative;padding-left:26px}
-.pts li::before,.job li::before{content:"•";position:absolute;left:5px;font-weight:700}
+.pts li{position:relative;padding-left:26px}
+.pts li::before{content:"•";position:absolute;left:5px;font-weight:700}
+.tech{color:var(--ink-soft)}
+.contd{text-align:right;color:var(--ink-soft)}
+.gap{height:var(--u)}
 
-.job + .job{margin-top:var(--u)}
-.job-top{display:flex;justify-content:space-between;flex-wrap:wrap;column-gap:24px}
-.job-top b{font-weight:700}
-.job-top .when{font-weight:400;white-space:nowrap}
-.job .org{color:var(--ink-soft);font-style:italic}
-.job .tech{color:var(--ink-soft)}
-.job .tech span{text-decoration:underline;text-underline-offset:4px}
+/* index page: the printed table at the front of every school notebook */
+.idx{margin-top:var(--u)}
+.idx-row{display:grid;grid-template-columns:64px 1fr 86px 112px;column-gap:0;text-decoration:none;color:inherit}
+a.idx-row:hover{background:rgba(29,60,158,.05)}
+.idx-row > span{padding:0 8px;box-shadow:inset 1px 0 0 var(--print);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.idx-row > span:first-child{box-shadow:none;text-align:center}
+.idx-row > span:nth-child(3){text-align:center}
+.idx-head > span{font-family:var(--printface);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--print);top:var(--n-lbl);text-overflow:clip}
+.idx-head .sh{display:none}
+.idx-head i,.idx-row i{font-style:normal}
+@media (max-width:640px){.idx-sub .lg{display:none}}
+.idx-head{box-shadow:inset 0 1px 0 var(--print),inset 0 -1px 0 var(--print)}
+.idx-body{box-shadow:inset 0 -1px 0 var(--print)}
+@media (max-width:640px){.idx-row{grid-template-columns:38px 1fr 48px}.idx-row > span:nth-child(4){display:none}.idx-row > span{padding:0 4px}.idx-head .lg{display:none}.idx-head .sh{display:inline}}
 
-.projects{counter-reset:p}
-.projects li{position:relative;padding-left:30px;counter-increment:p}
-.projects li::before{content:counter(p,lower-alpha) ")";position:absolute;left:2px}
-.projects .stack{color:var(--ink-soft)}
+/* about page, and the photo + name at the top of the index */
+.about,.lead{position:relative}
+.about::after,.lead::after{content:"";display:block;clear:both}
+.lead .photo{position:relative;top:14px}
+/* with the bar under the page, the links at the foot of each page are only for no-JavaScript readers */
+.is-book .page > .gap:nth-last-child(2),.is-book .turn{display:none}
+.photo{float:right;margin:4px 4px 0 16px;width:104px;height:130px;object-fit:cover;object-position:50% 25%;
+  border:4px solid #fff;box-shadow:0 0 0 1px rgba(29,60,158,.25),0 4px 10px -4px rgba(0,0,0,.3);transform:rotate(2deg)}
+@media (max-width:640px){.photo{width:80px;height:100px;border-width:3px}}
+.name{font-size:30px;line-height:calc(var(--u)*2);font-weight:700}
+@media (max-width:640px){.name{font-size:24px}}
+.about p{overflow-wrap:anywhere}
 
-.kv{display:grid;grid-template-columns:180px 1fr;column-gap:12px}
-.kv dt{font-weight:400}
+/* highlights */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);column-gap:24px;row-gap:0}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{display:flex;flex-direction:column}
+.stat b{font-family:var(--sign);font-size:42px;line-height:calc(var(--u)*2);position:relative;top:var(--n-stat)}
+
+/* projects */
+.projects li{position:relative;padding-left:32px}
+.box{position:absolute;left:2px;top:calc(var(--n1) + 5px);width:18px;height:18px;border:2px solid var(--ink);border-radius:3px 6px 4px 5px}
+.box.done::after{content:"";position:absolute;left:3px;top:-7px;width:8px;height:16px;border:solid var(--ink);border-width:0 3px 3px 0;transform:rotate(40deg)}
+
+/* skills */
+.kv{display:grid;grid-template-columns:150px 1fr;column-gap:12px}
 .kv dt::after{content:" :"}
 @media (max-width:640px){.kv{grid-template-columns:1fr}.kv dt{font-weight:700}.kv dd{padding-left:16px}}
 
+/* education table */
+.edu{min-width:520px}
 .table-wrap{overflow-x:auto;margin-top:var(--u)}
-.edu{min-width:560px}
-.edu{box-shadow:inset 0 -1px 0 var(--ink-soft)}
-.tr{display:grid;grid-template-columns:1.25fr 2fr .55fr .75fr}
-.th{font-weight:700;box-shadow:inset 0 -1px 0 var(--ink-soft),inset 0 1px 0 var(--ink-soft)}
-.tr span{padding:0 10px;box-shadow:inset 1px 0 0 var(--ink-soft)}
-.tr span:first-child{padding-left:0;box-shadow:none}
+.edu-row{display:grid;grid-template-columns:1.2fr 2fr .55fr .75fr}
+.edu-row > span{padding:0 8px;box-shadow:inset 1px 0 0 var(--print)}
+.edu-row > span:first-child{padding-left:0;box-shadow:none}
+.edu-row > span > i{font-style:normal;position:relative;top:var(--n1)}
+.edu-head{box-shadow:inset 0 1px 0 var(--print),inset 0 -1px 0 var(--print);font-weight:700}
+.edu{box-shadow:inset 0 -1px 0 var(--print)}
 
-.sign{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:0 24px;margin-top:var(--u)}
+/* declaration */
+.sign{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:0 24px}
 .sig{text-align:center}
-.scrawl{font-family:var(--sign);font-weight:600;font-size:40px;line-height:calc(var(--u)*2);transform:rotate(-4deg)}
+.scrawl{font-family:var(--sign);font-weight:600;font-size:36px;line-height:calc(var(--u)*2);transform:rotate(-4deg)}
+
+
+
+/* foot of each page: where to go next */
+.turn{display:flex;justify-content:space-between;flex-wrap:wrap;gap:0 24px}
+.turn a{position:relative;top:var(--n1);font-weight:400;text-decoration-thickness:1.5px}
+.turn .next{margin-left:auto}
+.turn a:hover{text-decoration-style:wavy}
+
+/* work experience: every role on one page */
+h3{font-size:17.5px;line-height:var(--u);display:flex;justify-content:space-between;flex-wrap:wrap;column-gap:20px}
+h3 > span,.page > h3{position:relative;top:var(--n1)}
+h3 .when{font-weight:400}
+h3 .co{font-weight:400}
+.role + .role{margin-top:var(--u)}
+.idx-sub > span:nth-child(2){padding-left:28px;color:var(--ink-soft)}
+.idx-sub > span:first-child{color:var(--ink-soft)}
+
+/* bar under the page: always shows where you can go */
+.pagebar{display:none}
+.is-book .binding{bottom:36px}
+.is-book .pagebar{display:flex;justify-content:space-between;gap:16px;padding:8px 6px 0;font-size:17px;line-height:28px}
+.pagebar a{font-weight:400;text-decoration-thickness:1.5px}
+.pagebar a:hover{text-decoration-style:wavy}
+.pagebar #bar-next{margin-left:auto}

@@ -1,16 +1,50 @@
 {
   "name": "Bhushan Ladde",
-  "headline": "Senior Software Engineer · Java · Python",
+  "headline": "Senior Software Engineer · Data Infrastructure & Distributed Systems",
   "updated": "Oct 2026",
-  "pitch": "13+ years building backend systems. Most recently I designed [[data pipelines that match 25M+ records in under 30 minutes]] at Nielsen.",
+  "location": "Folsom, CA · San Francisco Bay Area, CA",
   "email": "bhushanladde02@gmail.com",
   "linkedin": "https://linkedin.com/in/bhushanladde",
   "github": "https://github.com/bhushanladde02",
   "photo": "headshot.jpg",
+  "objective": "A senior backend or data platform role, designing reliable large-scale systems in Python and Java.",
+  "pitch": "13+ years building enterprise-scale backend systems. Most recently I designed [[data pipelines that match 25M+ records in under 30 minutes]] at Nielsen.",
+  "summary": [
+    "13+ years of backend and data systems in Python and Java.",
+    "Led Nielsen's [[Exposure Matching System]]: 25M+ records in 30 min.",
+    "Own pipelines end to end, from design to incident response.",
+    "Opened a [[new revenue line]]; cut [[$2M+ a year]] in cost.",
+    "From embedded Linux and TCP/IP to cloud-scale data."
+  ],
+  "highlights": [
+    {
+      "figure": "25M+",
+      "text": "records matched per run in 30 min"
+    },
+    {
+      "figure": "$2M+",
+      "text": "a year in operating cost removed"
+    },
+    {
+      "figure": "99.9%",
+      "text": "uptime through 4× traffic spikes"
+    },
+    {
+      "figure": "100+",
+      "text": "analysts on self-service data"
+    },
+    {
+      "figure": "50,000+",
+      "text": "users on BARCO's device platform"
+    },
+    {
+      "figure": "1st",
+      "text": "ACM Programming Contest, 2016 & 2017"
+    }
+  ],
   "roles": [
     {
       "id": "nielsen",
-      "short": "NLSN",
       "label": "Nielsen",
       "start": "2022-03",
       "end": "2026-07",
@@ -18,93 +52,91 @@
       "title": "Senior Software Engineer",
       "org": "Nielsen Holdings · media measurement",
       "points": [
-        "Architected the 3-pipeline Exposure Matching System on Apache Airflow: 25M+ records, 30-minute SLA.",
-        "Task graphs built for parallelism, local retries, back-pressure and failure isolation.",
-        "Ingestion holding 99.9% uptime through 4× traffic spikes.",
-        "Cut $2M+ a year in cost, halved deploy time, opened a new revenue line.",
-        "Brought Claude Code and Copilot into team development and code review."
+        "Led a 3-pipeline matching system on Airflow: 25M+ records in 30 min.",
+        "DAG design for parallelism and few retries; SLA held as volume grew.",
+        "Self-service analytics on S3, OLAP and Parquet for 100+ analysts.",
+        "Ingestion at 99.9% uptime through 4× traffic spikes.",
+        "Opened a new revenue line; cut $2M+ a year in operating cost.",
+        "Brought Claude Code and Copilot to the team; Copper & Silver Awards."
       ],
-      "stack": "Java, Python, Airflow, AWS S3, Parquet, PostgreSQL, Kubernetes, Terraform, Datadog"
+      "stack": "Python, Airflow, AWS S3, Parquet, PostgreSQL, Kubernetes, Java",
+      "company": "Nielsen Holdings"
     },
     {
       "id": "barco",
-      "short": "BARCO",
       "label": "BARCO",
       "start": "2018-10",
       "end": "2022-03",
       "dates": "Oct 2018 – Mar 2022",
       "title": "Software Engineer II",
-      "org": "BARCO · remote device management",
+      "org": "BARCO · cloud-native remote device management",
       "points": [
-        "Device management platform for 50,000+ users at 99.8% availability.",
-        "TCP/IP messaging across global fleets, −20% troubleshooting time.",
-        "Linux device drivers; cooling control +15% efficiency, −12% power."
+        "Device management platform: 50,000+ users at 99.8% availability.",
+        "TCP/IP messaging across global fleets: −20% troubleshooting time.",
+        "Linux drivers; cooling control +15% efficiency, −12% power."
       ],
-      "stack": "Java, C++, embedded Linux, TCP/IP, Qt"
+      "stack": "C++, Java, embedded Linux, TCP/IP, Qt",
+      "company": "BARCO"
     },
     {
-      "id": "ms",
-      "short": "M.S.",
+      "id": "internships",
       "label": "Internships",
       "start": "2016-01",
       "end": "2018-10",
       "dates": "Jan 2016 – Aug 2018",
       "title": "Software Engineering Intern",
-      "org": "KPMG · BARCO · Sacramento County DHHS · CSU Sacramento",
+      "org": "BARCO · KPMG · Sacramento County DHHS · CSU Sacramento",
       "points": [
-        "KPMG: built an AI helpdesk chatbot (NLP/LLM) that cut support tickets by 20%.",
-        "BARCO: VESA calculator automating design validation, cutting review time by 20%.",
-        "CSU Sacramento: university web portal used by 5,000+ students."
+        "KPMG: AI helpdesk chatbot (NLP/LLM), −20% support tickets.",
+        "BARCO: design-validation tool, −20% review time."
       ],
-      "stack": "Java, Python, NLP, JavaScript"
+      "stack": "Java, Python, NLP",
+      "company": "KPMG · BARCO · Sacramento County"
     },
     {
-      "id": "ofss",
-      "short": "OFSS",
+      "id": "oracle",
       "label": "Oracle FSS",
       "start": "2014-08",
       "end": "2016-01",
       "dates": "Aug 2014 – Dec 2015",
       "title": "Staff Consultant",
-      "org": "Oracle Financial Software Services · FlexCube banking",
+      "org": "Oracle Financial Software Services · FlexCube Direct Banking",
       "points": [
-        "Delivered mobile banking integration for First Global Bank (Jamaica).",
-        "Loan and funds-transfer modules: $1M+ a day at 99.99% accuracy.",
-        "Multithreading gains of 5%; tuned Oracle 11g stored procedures."
+        "Mobile banking integration on Oracle FlexCube for First Global Bank.",
+        "Banking modules: $1M+ a day at 99.99% accuracy; +5% throughput."
       ],
-      "stack": "Java, Spring Boot, SOAP/XML, Oracle 11g"
+      "stack": "Java, Spring Boot, Oracle 11g, WebLogic",
+      "company": "Oracle Financial Services"
     },
     {
-      "id": "bsc",
-      "short": "BSC",
+      "id": "bristlecone",
       "label": "Bristlecone",
       "start": "2013-08",
       "end": "2014-08",
       "dates": "Aug 2013 – Aug 2014",
       "title": "Associate Consultant",
-      "org": "Bristlecone (Mahindra Group) · supply chain",
+      "org": "Bristlecone (Mahindra Group) · supply chain and dealer platforms",
       "points": [
-        "Built Java microservices and REST APIs to supply-chain partners.",
-        "Inventory platform cut manual order processing 70% and latency 25%.",
-        "Star Performer Award, 2013."
+        "Mahindra dealer and inventory platforms: −70% manual processing.",
+        "Java microservices and REST APIs; Star Performer Award, 2013."
       ],
-      "stack": "Java, Spring Boot, Struts, SQL Server"
+      "stack": "Java, Spring Boot, Struts, SQL Server",
+      "company": "Bristlecone (Mahindra)"
     },
     {
       "id": "sne",
-      "short": "SNE",
       "label": "SNE Engineers",
       "start": "2012-01",
       "end": "2013-08",
       "dates": "Jan 2012 – Aug 2013",
       "title": "Software Engineer",
-      "org": "SNE Engineers · water infrastructure monitoring",
+      "org": "SNE Engineers Pvt Ltd · water infrastructure monitoring",
       "points": [
-        "Built WIMS: real-time water flow and pressure monitoring on a GIS map with alerts.",
-        "Wired Spring MVC and JSON services directly to field hardware.",
-        "Bridged a C# front end to the Java back end; Spring Security with LDAP."
+        "Real-time water network monitoring on a GIS map, with alerts.",
+        "Epanet modelling, BIRT reports, Spring Security with LDAP."
       ],
-      "stack": "Java, Spring MVC, LDAP, C#, MySQL"
+      "stack": "Java, Spring MVC, C#, MySQL",
+      "company": "SNE Engineers"
     }
   ],
   "projects": [
@@ -113,7 +145,7 @@
       "done": true,
       "status": "live",
       "url": "https://sharpenscore.com",
-      "text": "Free, open-source AI profile. It tracks how you work with AI and turns it into a monthly report and a 0–100 score that rewards independence, verification and learning, not volume.",
+      "text": "Open-source AI profile: a monthly report and a 0–100 score for how you work with AI.",
       "stack": "Java 21, Spring Boot, Thymeleaf, PostgreSQL, Docker, Oracle Cloud, GitHub Actions"
     },
     {
@@ -121,59 +153,66 @@
       "done": true,
       "status": "live",
       "url": "https://touchpath.onrender.com",
-      "text": "Open-source multi-touch attribution engine for marketing measurement.",
+      "text": "Open-source multi-touch attribution engine.",
       "stack": "Python, Sphinx, Render"
     },
     {
       "name": "Recovery Routes",
       "done": false,
       "status": "in progress",
-      "text": "Free web service mapping every lawful route to money a consumer is owed, with deadlines.",
+      "text": "Free service mapping every lawful route to money a consumer is owed.",
       "stack": "Java 21, Spring Boot, PostgreSQL"
+    },
+    {
+      "name": "SPY swing-trading bot",
+      "done": true,
+      "status": "running",
+      "text": "Rules-based trading automation with scheduled runs and reports.",
+      "stack": "Python, Oracle Cloud"
     },
     {
       "name": "Chrome Summarizer",
       "done": true,
       "status": "shipped",
-      "text": "LLM browser extension that summarizes the page you're reading.",
+      "text": "AI extension that summarizes the page you're reading.",
       "stack": "JavaScript, Claude Code"
     },
     {
       "name": "AI Chatbot Agent",
       "done": true,
       "status": "shipped",
-      "text": "Assistant that automates routine customer-service tasks.",
+      "text": "Assistant for routine customer-service tasks.",
       "stack": "Java, NLP, GitHub Copilot"
     }
   ],
   "skills": [
     [
       "Languages",
-      "Java (core, J2EE), Python, C++, C#, SQL, JavaScript / TypeScript, Bash"
+      "Python, Java / J2EE, C++, C#, SQL, JavaScript / TypeScript, Bash"
     ],
     [
-      "Data & pipelines",
-      "Apache Airflow, Parquet, AWS S3 data lake, MDL OLAP, Pytest"
+      "Data",
+      "Apache Airflow, ETL/ELT, Parquet, MDL OLAP, batch processing"
     ],
     [
-      "Frameworks",
-      "Spring Boot, Spring MVC, Spring Security, Hibernate, JMS / ActiveMQ"
+      "Backend",
+      "Spring Boot, Spring MVC / JPA / Security, Hibernate, REST, SOAP, GraphQL"
     ],
     [
-      "Systems",
-      "DAG design, back-pressure, retries, failure isolation, TCP/IP, REST, SOAP, GraphQL"
+      "Cloud & DevOps",
+      "AWS, Docker, Kubernetes, Terraform, GitHub Actions, ArgoCD"
     ],
     [
       "Databases",
       "PostgreSQL, Oracle 11g, SQL Server, MySQL"
     ],
     [
-      "Cloud & DevOps",
-      "AWS, Docker, Kubernetes, Terraform, GitHub Actions, Datadog"
+      "AI",
+      "Claude Code, GitHub Copilot, LLM apps and agents, Gemini, ChatGPT"
     ],
     [
-      "AI tools",
-      "Claude Code, GitHub Copilot, LLM applications and agents"
+      "Quality & ops",
+      "Pytest, JUnit, TDD, Datadog, SLA monitoring"
     ]
   ],
   "education": [
@@ -192,10 +231,6 @@
   ],
   "awards": [
     [
-      "Oracle Certified Java Programmer",
-      ""
-    ],
-    [
       "Copper Award, Nielsen Holdings",
       "2025"
     ],
@@ -204,7 +239,7 @@
       "2022"
     ],
     [
-      "1st place, ACM Programming Contest (Graduate Division)",
+      "1st place, ACM Programming Contest, Graduate Division",
       "2016, 2017"
     ],
     [
@@ -212,17 +247,13 @@
       "2014"
     ],
     [
-      "Star Performer Award, Bristlecone",
+      "Star Performer Award, Bristlecone (Mahindra Group)",
       "2013"
+    ],
+    [
+      "Oracle Certified Java Programmer",
+      ""
     ]
-  ],
-  "location": "Folsom, CA · San Francisco Bay Area, CA",
-  "objective": "To work as a senior backend or data platform engineer, designing reliable large-scale data systems in Java and Python, and to keep growing as a hands-on technical lead.",
-  "achievements": [
-    "[[25M+ records]] matched per run within a 30-minute SLA, 10–50 campaigns a day (Nielsen).",
-    "[[$2M+ a year]] in operating cost removed through pipeline optimization (Nielsen).",
-    "[[99.9% uptime]] on ingestion absorbing 4× traffic spikes (Nielsen).",
-    "[[1st place]], ACM Programming Contest, graduate division, 2016 and 2017."
   ],
   "declaration": "I hereby declare that the information given above is true to the best of my knowledge and belief."
 }

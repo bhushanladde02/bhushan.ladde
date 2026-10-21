@@ -16,6 +16,15 @@ def page(profile):
     return b.render(profile)
 
 
+@pytest.fixture(scope="module")
+def pages(profile):
+    return b.build_pages(profile, "headshot.jpg")
+
+
+def tokens(html):
+    return re.findall(r'data-token="([^"]+)"', html)
+
+
 def test_no_unfilled_placeholders(page):
     assert "{{" not in page and "}}" not in page
 
@@ -37,19 +46,59 @@ def test_html_parses_and_tags_balance(page):
     assert stack == []
 
 
-def test_experience_is_latest_first(page, profile):
-    titles = re.findall(r'<div class="job-top"><b>(.*?)</b><span class="when">(.*?)</span>', page)
-    assert titles[0] == ("Senior Software Engineer", "Mar 2022 – Jul 2026")
-    assert titles[-1][1] == "Jan 2012 – Aug 2013"
+def test_notebook_opens_on_the_index_then_section_pages(page):
+    assert tokens(page) == ["index", "about", "experience", "projects", "skills", "education"]
+
+
+def test_index_lists_every_section_once(page, pages):
+    rows = re.findall(r'<a class="idx-row" href="#([a-z0-9-]+)"', page)
+    assert rows == [pg["token"] for pg in pages[1:]]
+    assert page.count('class="pno"') == len(pages) - 1  # page numbers the script updates
+
+
+def test_every_role_has_a_link_target(page, profile):
+    for r in profile["roles"]:
+        assert page.count(f'id="role-{r["id"]}"') == 1
+
+
+def test_role_heading_is_one_line_with_company(page, profile):
+    nielsen = next(r for r in profile["roles"] if r["id"] == "nielsen")
+    assert f'{nielsen["title"]}<span class="co">, {nielsen["company"]}</span>' in page
+
+
+def test_each_page_names_the_next_page(page, pages):
+    nexts = re.findall(r'class="next"[^>]*>Next: ([^<]+) →</a>', page)
+    assert nexts == [b.esc(pg["title"]) for pg in pages[1:]]
+
+
+def test_index_has_no_remarks_column(page):
+    assert "Remarks" not in page and "class=\"tick\"" not in page
+
+
+def test_experience_is_one_page_latest_first(page, profile):
+    order = re.findall(r'<article class="role" id="role-([a-z0-9-]+)"', page)
+    assert order[0] == "nielsen" and order[-1] == "sne"
+    assert len(order) == len(profile["roles"])
     starts = [r["from"] for r in b.prepare_roles(profile["roles"])]
     assert starts == sorted(starts, reverse=True)
-    assert len(titles) == len(profile["roles"])
 
 
-def test_sections_in_classic_order(page):
-    heads = re.findall(r'<span class="no">\d\.</span>(.*?) :-</h2>', page)
-    assert heads == ["Career Objective", "Professional Summary", "Work Experience", "Projects",
-                     "Technical Skills", "Educational Qualifications", "Certifications &amp; Awards", "Declaration"]
+def test_nielsen_stack_leads_with_python(profile):
+    nielsen = next(r for r in profile["roles"] if r["id"] == "nielsen")
+    assert nielsen["stack"].split(",")[0].strip() == "Python"
+
+
+def test_page_numbers_in_corner_match_order(page):
+    corners = re.findall(r'<span class="lbl">Page No\.</span><span class="val">([^<]+)</span>', page)
+    assert corners[0] == "Index"
+    assert corners[1:] == [str(n) for n in range(1, len(corners))]
+
+
+def test_bad_role_ids_are_rejected(profile):
+    broken = dict(profile)
+    broken["roles"] = [dict(profile["roles"][0], id="Bad ID")]
+    with pytest.raises(ValueError, match="role id"):
+        b.build_pages(broken, "x.jpg")
 
 
 def test_highlight_and_escaping():
@@ -76,17 +125,27 @@ def test_all_content_appears(page, profile):
         assert b.esc(name) in page
     for e in profile["education"]:
         assert b.esc(e["school"]) in page
-    assert "<script" not in page  # plain document, no JavaScript needed
+    for r in profile["roles"]:
+        for point in r["points"]:
+            assert b.esc(point) in page
 
 
 def test_build_writes_site(tmp_path):
     index = b.build(tmp_path)
-    for name in ["index.html", "style.css", "headshot.jpg", ".nojekyll"]:
+    for name in ["index.html", "style.css", "notebook.js", "headshot.jpg", ".nojekyll",
+                 "fonts/kalam-latin-300-normal.woff2"]:
         assert (tmp_path / name).exists(), name
-    assert 'href="style.css"' in index.read_text(encoding="utf-8")
+    text = index.read_text(encoding="utf-8")
+    assert 'href="style.css"' in text and 'src="notebook.js"' in text
 
 
 def test_single_file_is_self_contained(tmp_path):
     text = b.build_single_file(tmp_path / "one.html").read_text(encoding="utf-8")
-    assert "data:image/jpeg;base64," in text
-    assert 'href="style.css"' not in text
+    assert "data:image/jpeg;base64," in text and "data:font/woff2;base64," in text
+    assert 'href="style.css"' not in text and 'src="notebook.js"' not in text
+
+
+def test_photo_and_name_open_the_index_page(page):
+    index_page = page.split('data-token="about"')[0]
+    assert index_page.index('class="photo"') < index_page.index("<h2>INDEX</h2>")
+    assert page.count('class="photo"') == 1

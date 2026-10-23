@@ -50,10 +50,24 @@ def test_notebook_opens_on_the_index_then_section_pages(page):
     assert tokens(page) == ["index", "about", "experience", "projects", "skills", "education", "note"]
 
 
-def test_index_lists_every_section_once(page, pages):
+def test_index_lists_every_section_and_job(page, pages, profile):
     rows = re.findall(r'<a class="idx-row" href="#([a-z0-9-]+)"', page)
     assert rows == [pg["token"] for pg in pages[1:]]
-    assert page.count('class="pno"') == len(pages) - 1  # page numbers the script updates
+    jobs = re.findall(r'<a class="idx-row idx-sub" href="#([a-z0-9-]+)"', page)
+    assert jobs == [f"role-{r['id']}" for r in b.prepare_roles(profile["roles"])]
+
+
+def test_sticky_tabs_link_every_sheet_and_the_pdf(page, pages, profile):
+    tabs = re.findall(r'<a href="#([a-z0-9-]+)" data-tab="\1">', page)
+    assert tabs == [pg["token"] for pg in pages]
+    assert f'class="tab-pdf" href="{profile["resume_pdf"]}" download' in page
+
+
+def test_one_scrolling_page_no_pagination(page):
+    js = (b.STATIC / "notebook.js").read_text(encoding="utf-8")
+    assert "paginate" not in js and "bar-next" not in page
+    for pg_id in ["index", "about", "experience", "projects", "skills", "education", "note"]:
+        assert f'<section class="page" id="{pg_id}"' in page
 
 
 def test_every_role_has_a_link_target(page, profile):
@@ -67,7 +81,7 @@ def test_role_heading_is_one_line_with_company(page, profile):
 
 
 def test_each_page_names_the_next_page(page, pages):
-    nexts = re.findall(r'class="next"[^>]*>Next: ([^<]+) →</a>', page)
+    nexts = re.findall(r'class="next"[^>]*>Next: ([^<]+) ↓</a>', page)
     assert nexts == [b.esc(pg["title"]) for pg in pages[1:]]
 
 
@@ -190,3 +204,10 @@ def test_every_page_is_dated_by_the_script(page, pages):
     assert 'Date: <span class="js-date">' in page  # declaration
     js = (b.STATIC / "notebook.js").read_text(encoding="utf-8")
     assert "getDate() - 1" in js and ".js-date" in js
+
+
+def test_spiral_binding_matches_the_ruling():
+    css = (b.STATIC / "style.css").read_text(encoding="utf-8")
+    rule = re.search(r"--u:(\d+)px", css).group(1)
+    binding = css[css.index(".binding{"):css.index("}", css.index(".binding{"))]
+    assert "data:image/svg+xml" in binding and f"/44px {rule}px repeat-y" in binding

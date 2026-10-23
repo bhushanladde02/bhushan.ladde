@@ -8,16 +8,19 @@
 {{STYLE}}
 </head>
 <body>
+<header class="tabs" id="tabs">
+  <nav class="tabs-in" aria-label="Sections">
+{{TABS}}
+  </nav>
+  <div class="progress" aria-hidden="true"><i id="progress"></i></div>
+</header>
 <main class="notebook" aria-label="{{NAME}}'s résumé">
   <div class="binding" aria-hidden="true"></div>
   <div class="book" id="book">
 {{PAGES}}
   </div>
-  <nav class="pagebar" id="pagebar" aria-label="Sections">
-    <a id="bar-prev" href="#"></a>
-    <a id="bar-next" href="#"></a>
-  </nav>
 </main>
+<a class="to-top" id="to-top" href="#index" aria-label="Back to the index">↑ Index</a>
 {{SCRIPT}}
 </body>
 </html>

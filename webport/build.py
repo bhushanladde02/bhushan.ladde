@@ -181,7 +181,7 @@ def build_pages(p: dict, photo: str) -> list[dict]:
         {"token": "index", "title": "Index", "date": "", "body": None, "lead": cover_lead(p, photo)},
         {"token": "about", "title": "About Me", "date": p["updated"], "body": about_body(p)},
         {"token": "experience", "title": "Work Experience", "date": span, "body": experience_body(p),
-         "parts": [(r["label"], "", f'role-{r["id"]}', r["years"]) for r in roles]},
+         "parts": [(r["label"], r["title"], f'role-{r["id"]}', r["years"]) for r in roles]},
         {"token": "projects", "title": "Projects", "date": p["updated"], "body": projects_body(p)},
         {"token": "skills", "title": "Technical Skills", "date": p["updated"], "body": skills_body(p)},
         {"token": "education", "title": "Education & Awards", "date": p["updated"], "body": edu_body},
@@ -205,14 +205,15 @@ def index_body(pages: list[dict], updated: str = "") -> str:
     def row(sr, text, goto, anchor, page_no, date, cls="", extra=""):
         href = f"#{anchor or pages[goto]['token']}"
         more = f'<i class="lg"> · {esc(extra)}</i>' if extra else ""
-        return (f'<a class="idx-row{cls}" href="{href}" data-goto="{goto}"'
-                + (f' data-anchor="{anchor}"' if anchor else "") + '>'
+        return (f'<a class="idx-row{cls}" href="{href}">'
                 f'<span>{sr}</span><span>{esc(text)}{more}</span><span class="pno">{page_no}</span>'
                 + (f'<span class="js-date">{esc(date)}</span></a>' if date == updated else f'<span>{esc(date)}</span></a>'))
 
     rows = []
     for pg in pages[1:]:
         rows.append(row(f'{pg["number"]}.', pg["title"], pg["number"], "", pg["number"], pg["date"]))
+        for k, (label, title, anchor, date) in enumerate(pg.get("parts", [])):
+            rows.append(row(f'({chr(97 + k)})', label, pg["number"], anchor, pg["number"], date, " idx-sub", title))
     head = ('<div class="idx-row idx-head" aria-hidden="true">'
             '<span><i class="lg">Sr. No.</i><i class="sh">No.</i></span><span>Contents</span>'
             '<span><i class="lg">Page No.</i><i class="sh">Page</i></span><span>Date</span></div>')
@@ -226,10 +227,10 @@ def render_page(pg: dict, pages: list[dict], fallback_date: str = "") -> str:
     links = []
     if n > 0:
         prev = pages[n - 1]
-        links.append(f'<a class="prev" href="#{prev["token"]}" data-goto="{n - 1}">← {esc(prev["title"])}</a>')
+        links.append(f'<a class="prev" href="#{prev["token"]}">↑ {esc(prev["title"])}</a>')
     if n + 1 < len(pages):
         nxt = pages[n + 1]
-        links.append(f'<a class="next" href="#{nxt["token"]}" data-goto="{n + 1}">Next: {esc(nxt["title"])} →</a>')
+        links.append(f'<a class="next" href="#{nxt["token"]}">Next: {esc(nxt["title"])} ↓</a>')
     foot = f'<div class="gap"></div><nav class="turn" aria-label="Sections">{"".join(links)}</nav>'
     return (
         f'    <section class="page" id="{pg["token"]}" data-token="{pg["token"]}" data-title="{esc(pg["title"])}" '
@@ -242,6 +243,17 @@ def render_page(pg: dict, pages: list[dict], fallback_date: str = "") -> str:
         f'      {foot}\n'
         f'    </section>'
     )
+
+
+def tabs_html(pages: list[dict], p: dict) -> str:
+    """The strip of section tabs that stays at the top while you scroll."""
+    short = {"index": "Index", "about": "About", "experience": "Experience", "projects": "Projects",
+             "skills": "Skills", "education": "Education", "note": "Note"}
+    links = [f'    <a href="#{pg["token"]}" data-tab="{pg["token"]}">{esc(short.get(pg["token"], pg["title"]))}</a>'
+             for pg in pages]
+    if p.get("resume_pdf"):
+        links.append(f'    <a class="tab-pdf" href="{esc(p["resume_pdf"])}" download target="_blank" rel="noopener">↓ PDF</a>')
+    return "\n".join(links)
 
 
 def render(profile: dict, *, inline: bool = False) -> str:
@@ -270,6 +282,7 @@ def render(profile: dict, *, inline: bool = False) -> str:
         "HEADLINE": esc(profile["headline"]),
         "UPDATED": esc(profile["updated"]),
         "PAGES": html_pages,
+        "TABS": tabs_html(pages, profile),
         "STYLE": style,
         "SCRIPT": script,
     }

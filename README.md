@@ -1,7 +1,7 @@
 # bhushan.ladde
 
-My résumé as an old-school notebook: white ruled pages written in blue ink, a red margin, a cloth
-binding down the left edge, and an index at the front.
+My résumé as an old-school notebook on one scrolling page: white ruled sheets written in blue ink, a red
+margin, a spiral wire binding down the left edge, and an index at the front.
 Live at **https://bhushanladde02.github.io/bhushan.ladde/**
 
 All content lives in one file, `content/profile.json`. A small Python script (standard library only)
@@ -9,14 +9,13 @@ renders it into a static site in `docs/`, which GitHub Pages serves.
 
 ## What's in the notebook
 
-Six sections after the index. Every page is the same size and nothing scrolls: when a section has more
-writing than one page holds, it carries over to the next page under "(contd.)", the way you would write
-in a real notebook. A job is never split across pages, and a heading is never left alone at the foot
-of a page.
+Seven sheets stacked down one page, the index first, with a thin seam between sheets. Each sheet is as
+long as its writing. The spiral binding has one silver loop through a punched hole on every ruled line
+(an inline SVG tile, 44×28px, on `.binding` in `static/style.css`).
 
 | Section | Contents |
 |---------|----------|
-| Index | My photo, name, title, contact details (email, phone, LinkedIn, GitHub) a work-authorization stamp (`work_authorization` in `profile.json`) and a link to download my PDF résumé, then Sr. No., contents, page numbers and dates |
+| Index | My photo, name, title, contact details (email, phone, LinkedIn, GitHub), a work-authorization stamp (`work_authorization` in `profile.json`) and a link to download my PDF résumé, then Sr. No., contents (with a row per job), page numbers and dates |
 | About Me | Career objective, professional summary, highlights |
 | Work Experience | Every role, newest first, each with a one-line heading and its strongest points |
 | Projects | Live and in-progress projects with a tick box for each |
@@ -24,18 +23,20 @@ of a page.
 | Education & Awards | Qualifications table, awards, and the signed declaration |
 | Cover Note | A short, signed note to the hiring manager: what I bring (`cover_note` in `profile.json`) |
 
-On a laptop the notebook lies open, showing two facing pages with the binding down the middle (about
-4–5 views in all); on a phone it shows one page at a time. Page numbers in each corner and in the index
-follow how the pages actually fall on that screen.
+Getting around:
+- A strip of section tabs (Index, About, Experience, Projects, Skills, Education, Note, ↓ PDF) stays at
+  the top while you scroll. The tab for the sheet you are reading is filled in, and a thin line under the
+  tabs fills up as you read down the page.
+- Every index row, including each job, scrolls smoothly to its place; the sheet you land on flashes briefly.
+- Each sheet ends with "Next: … ↓" and "↑ …" links, and an "↑ Index" button appears once you scroll down.
+- Every sheet and job has its own link, e.g. `…/bhushan.ladde/#projects` or `#role-nielsen`.
+- Section headings draw their ink underline as they scroll into view (skipped for readers who turn
+  off motion). Without JavaScript everything still works as plain links.
 
 Dates: the Date box on every page (and the declaration) always shows yesterday's date, worked out from
 the visitor's clock when the page opens (`.js-date` in the HTML, filled by `static/notebook.js`). The build
 writes the `updated` month there as a fallback for readers without JavaScript.
 
-Reading it: the bar under the pages always names what comes next ("Next: Work Experience →"); the
-← / → keys and a swipe on phones do the same, and each index row opens its page. Every section has its
-own link, e.g. `…/bhushan.ladde/#projects`, and each job too, e.g. `#role-nielsen`.
-Without JavaScript the sections simply stack down the screen.
 
 ## Layout
 
@@ -43,11 +44,11 @@ Without JavaScript the sections simply stack down the screen.
 content/profile.json   ← edit this: everything written in the notebook
 assets/headshot.jpg    ← profile photo (pasted at the top of the Index page)
 assets/Bhushan_Ladde_Resume.pdf ← downloadable résumé; swap the file to update it (`resume_pdf` in profile.json)
-templates/index.html   ← the notebook shell: binding and pages
-static/style.css       ← binding, ruled pages, red margin, blue ink, two-page spread
-static/notebook.js     ← flows sections onto equal pages, spreads, live page numbers, next bar, keys, swipe
+templates/index.html   ← the shell: section tabs, spiral binding, sheets, back-to-top button
+static/style.css       ← spiral binding, ruled sheets, red margin, blue ink, tabs
+static/notebook.js     ← yesterday's dates, smooth scrolling, active tab, reading progress, ink underlines
 static/fonts/          ← Kalam and Caveat handwriting fonts, self-hosted
-webport/build.py       ← builds the pages and the index from profile.json
+webport/build.py       ← builds the sheets, index and tabs from profile.json
 docs/                  ← generated site, committed, served by GitHub Pages
 tests/                 ← pytest checks on the generated notebook
 ```
@@ -75,8 +76,7 @@ Notes on `profile.json`:
 - Roles can be listed in any order; they are printed newest first, sorted by `start` (`YYYY-MM`).
   `dates` is the text shown to readers. A role's `id` becomes its link (`#role-<id>`), so use lowercase
   letters, digits and dashes. `company` is shown after the title on the role's heading line.
-  Keep each role to its strongest 2–6 points, each short enough for one line; that is what keeps the
-  whole notebook to a few spreads.
+  Keep each role to its strongest 2–6 points, each short enough for one line.
 - In `pitch` and `summary`, wrap a phrase in `[[double brackets]]` to underline it.
 - `highlights` are the big handwritten numbers at the end of the About page.
 - `education` rows fill the qualifications table; leave `result` empty to print a dash.
@@ -93,8 +93,7 @@ Each size of handwriting has a measured nudge (`--n1`, `--n-h2`, `--n-name` and 
 moves it down onto its rule without changing the layout. If you change `--u` or a font size, re-measure
 those values.
 
-Pages are a whole number of lines that fits the window (between 16 and 30, worked out in
-`static/notebook.js`), so every page has the same rows. Wide windows (1100px and up) show two pages.
+Each sheet's height is a whole number of lines because everything on it is.
 
 ## Publishing on GitHub Pages
 

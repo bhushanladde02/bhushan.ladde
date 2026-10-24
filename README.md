@@ -50,7 +50,7 @@ static/notebook.js     ← yesterday's dates, smooth scrolling, active tab, read
 static/fonts/          ← Kalam and Caveat handwriting fonts, self-hosted
 webport/build.py       ← builds the sheets, index and tabs from profile.json
 docs/                  ← generated site, committed, served by GitHub Pages
-tests/                 ← pytest checks on the generated notebook
+tests/                 ← pytest checks on the generated notebook.
 ```
 
 ## Everyday commands

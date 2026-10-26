@@ -103,7 +103,7 @@ def test_nielsen_stack_leads_with_python(profile):
 
 
 def test_page_numbers_in_corner_match_order(page):
-    corners = re.findall(r'<span class="lbl">Page No\.</span><span class="val">([^<]+)</span>', page)
+    corners = re.findall(r'<span class="lbl">Page No\.</span><i class="sep"> </i><span class="val">([^<]+)</span>', page)
     assert corners[0] == "Index"
     assert corners[1:] == [str(n) for n in range(1, len(corners))]
 
@@ -199,7 +199,7 @@ def test_stamp_is_straight():
 
 
 def test_every_page_is_dated_by_the_script(page, pages):
-    corners = re.findall(r'<span class="lbl">Date</span><span class="val js-date">([^<]*)</span>', page)
+    corners = re.findall(r'<span class="lbl">Date</span><i class="sep"> </i><span class="val js-date">([^<]*)</span>', page)
     assert len(corners) == len(pages)          # index included
     assert 'Date: <span class="js-date">' in page  # declaration
     js = (b.STATIC / "notebook.js").read_text(encoding="utf-8")
@@ -211,3 +211,67 @@ def test_spiral_binding_matches_the_ruling():
     rule = re.search(r"--u:(\d+)px", css).group(1)
     binding = css[css.index(".binding{"):css.index("}", css.index(".binding{"))]
     assert "data:image/svg+xml" in binding and f"/44px {rule}px repeat-y" in binding
+
+
+def page_text(html):
+    """The page's text the way a scraper reads it: tags dropped, no CSS, scripts and styles skipped."""
+    out, skip = [], [0]
+
+    class P(HTMLParser):
+        def handle_starttag(self, tag, attrs):
+            if tag in ("script", "style"):
+                skip[0] += 1
+            elif tag in ("p", "li", "h1", "h2", "h3", "div", "a", "dt", "dd", "section", "br"):
+                out.append("\n")
+
+        def handle_endtag(self, tag):
+            if tag in ("script", "style"):
+                skip[0] -= 1
+
+        def handle_data(self, data):
+            if not skip[0]:
+                out.append(data)
+
+    P().feed(html)
+    return re.sub(r"[ \t]+", " ", "".join(out))
+
+
+def test_scraped_text_keeps_pieces_apart(page, profile):
+    text = page_text(page)
+    nielsen = next(r for r in profile["roles"] if r["id"] == "nielsen")
+    assert f'{nielsen["company"]} | {nielsen["dates"]}' in text
+    first = profile["highlights"][0]
+    assert f'{first["figure"]} {first["text"]}' in text
+    assert "California State University, Sacramento | 2018 | GPA 3.65" in text
+    assert re.search(r"1\. About Me \| page 1 \|", text)
+    assert "No.No." not in text and "PagePage" not in text
+
+
+def test_structured_data_describes_me(page, profile):
+    import json
+    block = re.search(r'<script type="application/ld\+json">(.*?)</script>', page, re.S).group(1)
+    data = json.loads(block)
+    assert data["@type"] == "Person" and data["name"] == profile["name"]
+    assert data["email"] == "mailto:" + profile["email"] and data["telephone"] == profile["phone"]
+    assert profile["linkedin"] in data["sameAs"] and profile["github"] in data["sameAs"]
+    assert data["image"] == profile["site_url"] + profile["photo"]
+    assert len(data["hasOccupation"]) == len(profile["roles"])
+
+
+def test_link_preview_tags(page, profile):
+    url = profile["site_url"]
+    for tag in [f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">',
+                f'<meta property="og:image" content="{url}{profile["photo"]}">', '<meta property="og:type" content="profile">',
+                '<meta name="twitter:card" content="summary">']:
+        assert tag in page, tag
+    assert re.search(r'<meta property="og:title" content="Bhushan Ladde — Senior Software Engineer">', page)
+
+
+def test_botspotter_leads_projects_with_site_and_repo(page, profile):
+    first = profile["projects"][0]
+    assert first["name"] == "BotSpotter"
+    projects = page.split('<section class="page" id="projects"')[1].split("</section>")[0]
+    assert projects.index("BotSpotter") < projects.index("Sharpen")
+    assert 'href="https://botspotter.app/"' in projects and ">botspotter.app</a>" in projects
+    assert 'href="https://github.com/bhushanladde02/botspotter"' in projects
+    assert "Oct 2026 – present" in projects

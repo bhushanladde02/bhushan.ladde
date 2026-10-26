@@ -20,6 +20,13 @@ REQUIRED = ["name", "headline", "updated", "pitch", "email", "linkedin", "github
 TOKEN = re.compile(r"^[a-z0-9-]+$")  # page ids used in the URL (#nielsen)
 
 
+# Invisible on screen, but present in the page text, so scrapers and readers don't fuse
+# side-by-side pieces ("Nielsen Holdings | Mar 2022"). <i>, not <span>, so the layout's
+# span selectors (grid cells, nth-child) never count them.
+SEP = '<i class="sep"> | </i>'
+SP = '<i class="sep"> </i>'
+
+
 def esc(text) -> str:
     return html.escape(str(text), quote=True)
 
@@ -106,7 +113,7 @@ def about_body(p: dict) -> str:
 
 
 def highlights_body(p: dict) -> str:
-    cells = "".join(f'<div class="stat"><b>{esc(h["figure"])}</b><span>{esc(h["text"])}</span></div>'
+    cells = "".join(f'<div class="stat"><b>{esc(h["figure"])}</b>{SP}<span>{esc(h["text"])}</span></div>'
                     for h in p.get("highlights", []))
     return f'<div class="stats">{cells}</div>'
 
@@ -114,7 +121,7 @@ def highlights_body(p: dict) -> str:
 def role_block(r: dict) -> str:
     company = r.get("company") or r["org"]
     return (f'<article class="role" id="role-{r["id"]}">'
-            f'<h3><span>{esc(r["title"])}<span class="co">, {esc(company)}</span></span><span class="when">{esc(r["dates"])}</span></h3>'
+            f'<h3><span>{esc(r["title"])}<span class="co">, {esc(company)}</span></span>{SEP}<span class="when">{esc(r["dates"])}</span></h3>'
             f'{bullets(r["points"])}'
             f'<p class="tech">Stack: {esc(r["stack"])}</p></article>')
 
@@ -128,9 +135,13 @@ def projects_body(p: dict) -> str:
     for x in p.get("projects", []):
         box = '<span class="box done" aria-label="Done"></span>' if x.get("done") else '<span class="box" aria-label="In progress"></span>'
         status = esc(x.get("status", ""))
-        if x.get("url"):
-            status += f', <a href="{esc(x["url"])}" target="_blank" rel="noopener">{esc(short_url(x["url"]))}</a>'
-        rows.append(f'<li>{box}<b>{esc(x["name"])}</b> ({status}) – {esc(x["text"])} '
+        if x.get("dates"):
+            status += f' · {esc(x["dates"])}'
+        for key in ("url", "repo"):  # live site, then source code
+            if x.get(key):
+                status += f', <a href="{esc(x[key])}" target="_blank" rel="noopener">{esc(short_url(x[key]))}</a>'
+        name = f'<b>{esc(x["name"])}</b>' + (f' — {esc(x["tagline"])}' if x.get("tagline") else "")
+        rows.append(f'<li>{box}{name} ({status}) – {esc(x["text"])} '
                     f'<span class="tech">[{esc(x["stack"])}]</span></li>')
     return '<ul class="projects">' + "".join(rows) + "</ul>"
 
@@ -140,9 +151,9 @@ def skills_body(p: dict) -> str:
 
 
 def education_body(p: dict) -> str:
-    head = "".join(f'<span role="columnheader"><i>{h}</i></span>' for h in ["Qualification", "University / College", "Year", "Result"])
+    head = SEP.join(f'<span role="columnheader"><i>{h}</i></span>' for h in ["Qualification", "University / College", "Year", "Result"])
     rows = "".join(
-        '<div class="edu-row" role="row">' + "".join(f'<span role="cell"><i>{esc(c)}</i></span>'
+        '<div class="edu-row" role="row">' + SEP.join(f'<span role="cell"><i>{esc(c)}</i></span>'
         for c in [e["degree"], e["school"], e["year"], e.get("result") or "—"]) + "</div>"
         for e in p.get("education", []))
     return (f'<div class="table-wrap"><div class="edu" role="table" aria-label="Educational qualifications">'
@@ -206,7 +217,7 @@ def index_body(pages: list[dict], updated: str = "") -> str:
         href = f"#{anchor or pages[goto]['token']}"
         more = f'<i class="lg"> · {esc(extra)}</i>' if extra else ""
         return (f'<a class="idx-row{cls}" href="{href}">'
-                f'<span>{sr}</span><span>{esc(text)}{more}</span><span class="pno">{page_no}</span>'
+                f'<span>{sr}</span>{SP}<span>{esc(text)}{more}</span>{SEP}<span class="pno"><i class="sep">page </i>{page_no}</span>{SEP}'
                 + (f'<span class="js-date">{esc(date)}</span></a>' if date == updated else f'<span>{esc(date)}</span></a>'))
 
     rows = []
@@ -215,8 +226,8 @@ def index_body(pages: list[dict], updated: str = "") -> str:
         for k, (label, title, anchor, date) in enumerate(pg.get("parts", [])):
             rows.append(row(f'({chr(97 + k)})', label, pg["number"], anchor, pg["number"], date, " idx-sub", title))
     head = ('<div class="idx-row idx-head" aria-hidden="true">'
-            '<span><i class="lg">Sr. No.</i><i class="sh">No.</i></span><span>Contents</span>'
-            '<span><i class="lg">Page No.</i><i class="sh">Page</i></span><span>Date</span></div>')
+            '<span><i class="lg">Sr. No.</i><i class="sh" data-t="No."></i></span><span>Contents</span>'
+            '<span><i class="lg">Page No.</i><i class="sh" data-t="Page"></i></span><span>Date</span></div>')
     return f'<nav class="idx" aria-label="Index">{head}<div class="idx-body">{"".join(rows)}</div></nav>'
 
 
@@ -235,14 +246,78 @@ def render_page(pg: dict, pages: list[dict], fallback_date: str = "") -> str:
     return (
         f'    <section class="page" id="{pg["token"]}" data-token="{pg["token"]}" data-title="{esc(pg["title"])}" '
         f'aria-label="{esc(pg["title"])}">\n'
-        f'      <div class="corner"><span class="lbl">Page No.</span><span class="val">{corner_no}</span>'
-        f'<span class="lbl">Date</span><span class="val js-date">{esc(fallback_date)}</span></div>\n'
+        f'      <div class="corner" aria-hidden="true"><span class="lbl">Page No.</span>{SP}<span class="val">{corner_no}</span>{SEP}'
+        f'<span class="lbl">Date</span>{SP}<span class="val js-date">{esc(fallback_date)}</span></div>\n'
         + (f'      {pg["lead"]}\n' if pg.get("lead") else "")
         + f'      <h2>{heading}</h2>\n'
         f'      {pg["body"]}\n'
         f'      {foot}\n'
         f'    </section>'
     )
+
+
+def description(p: dict) -> str:
+    """One plain sentence for search results and link previews."""
+    pitch = plain(p["pitch"])
+    return f'{p["name"]} — {p["headline"]}. {pitch} Based in {p.get("location", "")}.'
+
+
+def plain(text: str) -> str:
+    """Drop the [[highlight]] markers."""
+    return re.sub(r"\[\[|\]\]", "", text)
+
+
+def person_jsonld(p: dict) -> dict:
+    """schema.org Person, so search engines and recruiter tools read who I am without guessing."""
+    url = p.get("site_url", "")
+    roles = prepare_roles(p["roles"])
+    city, _, region = p.get("location", "").split(" · ")[0].partition(", ")
+    data = {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": p["name"],
+        "jobTitle": p["headline"].split(" · ")[0],
+        "description": plain(p["pitch"]),
+        "email": f'mailto:{p["email"]}',
+        "url": url,
+        "sameAs": [p["linkedin"], p["github"]],
+        "address": {"@type": "PostalAddress", "addressLocality": city, "addressRegion": region, "addressCountry": "US"},
+        "alumniOf": [{"@type": "CollegeOrUniversity", "name": e["school"]} for e in p.get("education", [])],
+        "knowsAbout": [s.strip() for _, v in p.get("skills", []) for s in v.split(",")][:30],
+        "hasOccupation": [{"@type": "Occupation", "name": r["title"],
+                           "description": f'{r.get("company") or r["label"]}, {r["dates"]}'} for r in roles],
+        "award": [a[0] + (f" ({a[1]})" if a[1] else "") for a in p.get("awards", [])],
+    }
+    if p.get("phone"):
+        data["telephone"] = p["phone"]
+    if url:
+        data["image"] = url + p["photo"]
+    return data
+
+
+def head_meta(p: dict) -> str:
+    """Canonical link, link-preview cards (LinkedIn, Slack, email, X) and the JSON-LD block."""
+    url = p.get("site_url", "")
+    title = f'{p["name"]} — {p["headline"].split(" · ")[0]}'
+    desc = description(p)
+    tags = []
+    if url:
+        tags += [f'<link rel="canonical" href="{esc(url)}">',
+                 f'<meta property="og:url" content="{esc(url)}">',
+                 f'<meta property="og:image" content="{esc(url + p["photo"])}">',
+                 f'<meta property="og:image:alt" content="{esc(p["name"])}">']
+    first, _, last = p["name"].partition(" ")
+    tags += [f'<meta property="og:type" content="profile">',
+             f'<meta property="og:title" content="{esc(title)}">',
+             f'<meta property="og:description" content="{esc(desc)}">',
+             f'<meta property="profile:first_name" content="{esc(first)}">',
+             f'<meta property="profile:last_name" content="{esc(last)}">',
+             '<meta name="twitter:card" content="summary">',
+             f'<meta name="twitter:title" content="{esc(title)}">',
+             f'<meta name="twitter:description" content="{esc(desc)}">',
+             f'<meta name="author" content="{esc(p["name"])}">',
+             '<script type="application/ld+json">' + json.dumps(person_jsonld(p), ensure_ascii=False).replace("</", "<\\/") + "</script>"]
+    return "\n".join(tags)
 
 
 def tabs_html(pages: list[dict], p: dict) -> str:
@@ -282,6 +357,8 @@ def render(profile: dict, *, inline: bool = False) -> str:
         "HEADLINE": esc(profile["headline"]),
         "UPDATED": esc(profile["updated"]),
         "PAGES": html_pages,
+        "DESCRIPTION": esc(description(profile)),
+        "HEAD_META": head_meta(profile),
         "TABS": tabs_html(pages, profile),
         "STYLE": style,
         "SCRIPT": script,

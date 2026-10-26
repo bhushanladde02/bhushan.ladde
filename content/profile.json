@@ -2,6 +2,7 @@
   "name": "Bhushan Ladde",
   "headline": "Senior Software Engineer · Data Infrastructure & Distributed Systems",
   "updated": "Oct 2026",
+  "site_url": "https://bhushanladde02.github.io/bhushan.ladde/",
   "location": "Folsom, CA · San Francisco Bay Area, CA",
   "email": "bhushanladde02@gmail.com",
   "phone": "+1 916 477 5226",
@@ -147,6 +148,17 @@
   ],
   "projects": [
     {
+      "name": "BotSpotter",
+      "tagline": "live map and counter of AI bots crawling the web",
+      "done": true,
+      "status": "live",
+      "dates": "Oct 2026 – present",
+      "url": "https://botspotter.app/",
+      "repo": "https://github.com/bhushanladde02/botspotter",
+      "text": "Open-source, all-Python real-time pipeline that detects AI crawlers and agents (GPTBot, ClaudeBot, PerplexityBot and unidentified automation) from a crowd-sourced network of website sensors, gives each bot a deterministic name that persists across every site, classifies it as training / search / agent, and streams it to a live world map. Privacy-first: no IPs stored, cookieless visitor counting. Runs on free tiers, with a growth plan tied to numeric triggers.",
+      "stack": "FastAPI + Granian/uvloop ingest, Redpanda (Kafka), asyncio aggregator, Redis counters + HyperLogLog, PostgreSQL/TimescaleDB, MapLibre, Docker Compose on Oracle Cloud"
+    },
+    {
       "name": "Sharpen",
       "done": true,
       "status": "live",
@@ -198,11 +210,11 @@
     ],
     [
       "Data",
-      "Apache Airflow, ETL/ELT, Parquet, MDL OLAP, batch processing"
+      "Apache Airflow, ETL/ELT, Parquet, MDL OLAP, batch processing, Kafka / Redpanda, stream processing"
     ],
     [
       "Backend",
-      "Spring Boot, Spring MVC / JPA / Security, Hibernate, REST, SOAP, GraphQL"
+      "Spring Boot, Spring MVC / JPA / Security, Hibernate, REST, SOAP, GraphQL, FastAPI"
     ],
     [
       "Cloud & DevOps",
@@ -210,7 +222,7 @@
     ],
     [
       "Databases",
-      "PostgreSQL, Oracle 11g, SQL Server, MySQL"
+      "PostgreSQL, Oracle 11g, SQL Server, MySQL, Redis, TimescaleDB"
     ],
     [
       "AI",

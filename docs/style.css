@@ -92,14 +92,17 @@ h2 small{font-size:16px;line-height:1;font-weight:300;margin-left:6px;color:var(
 a.idx-row:hover{background:rgba(29,60,158,.05)}
 .idx-row > span{padding:0 8px;box-shadow:inset 1px 0 0 var(--print);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .idx-row > span:first-child{box-shadow:none;text-align:center}
-.idx-row > span:nth-child(3){text-align:center}
+.idx-row > span:nth-of-type(3){text-align:center}
 .idx-head > span{font-family:var(--printface);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--print);top:var(--n-lbl);text-overflow:clip}
 .idx-head .sh{display:none}
 .idx-head i,.idx-row i{font-style:normal}
+/* text kept for machines and screen readers, hidden on screen */
+.sep{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip-path:inset(50%);white-space:pre}
+.idx-head .sh::before{content:attr(data-t)}
 @media (max-width:640px){.idx-sub .lg{display:none}}
 .idx-head{box-shadow:inset 0 1px 0 var(--print),inset 0 -1px 0 var(--print)}
 .idx-body{box-shadow:inset 0 -1px 0 var(--print)}
-@media (max-width:640px){.idx-row{grid-template-columns:38px 1fr 48px}.idx-row > span:nth-child(4){display:none}.idx-row > span{padding:0 4px}.idx-head .lg{display:none}.idx-head .sh{display:inline}}
+@media (max-width:640px){.idx-row{grid-template-columns:38px 1fr 48px}.idx-row > span:nth-of-type(4){display:none}.idx-row > span{padding:0 4px}.idx-head .lg{display:none}.idx-head .sh{display:inline}}
 
 /* work authorization, inked like a rubber stamp (outline takes no space, so the line stays on its rule) */
 .visa{white-space:normal}
@@ -173,7 +176,7 @@ h3 > span,.page > h3{position:relative;top:var(--n1)}
 h3 .when{font-weight:400}
 h3 .co{font-weight:400}
 .role + .role{margin-top:var(--u)}
-.idx-sub > span:nth-child(2){padding-left:28px;color:var(--ink-soft)}
+.idx-sub > span:nth-of-type(2){padding-left:28px;color:var(--ink-soft)}
 .idx-sub > span:first-child{color:var(--ink-soft)}
 
 /* bar under the page: always shows where you can go */
@@ -226,4 +229,4 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 /* foot of each sheet: what comes next, further down */
 .turn a{font-size:17px}
-.idx-sub > span:nth-child(2){padding-left:28px}
+.idx-sub > span:nth-of-type(2){padding-left:28px}

@@ -41,7 +41,7 @@ writes the `updated` month there as a fallback for readers without JavaScript.
 ## Layout
 
 ```
-content/profile.json   ← edit this: everything written in the notebook
+content/profile.json   ← edit this: everything written in the notebook, plus `site_url` for previews
 assets/headshot.jpg    ← profile photo (pasted at the top of the Index page)
 assets/Bhushan_Ladde_Resume.pdf ← downloadable résumé; swap the file to update it (`resume_pdf` in profile.json)
 templates/index.html   ← the shell: section tabs, spiral binding, sheets, back-to-top button
@@ -80,7 +80,8 @@ Notes on `profile.json`:
 - In `pitch` and `summary`, wrap a phrase in `[[double brackets]]` to underline it.
 - `highlights` are the big handwritten numbers at the end of the About page.
 - `education` rows fill the qualifications table; leave `result` empty to print a dash.
-- A project with `"done": false` gets an empty checkbox; add `"url"` to link it.
+- A project with `"done": false` gets an empty checkbox; add `"url"` (live site) and `"repo"` (source) to link
+  it, `"dates"` for when it ran, and `"tagline"` for a short line after its name. Projects print in the order listed.
 
 ## Keeping writing on the lines
 
@@ -94,6 +95,24 @@ moves it down onto its rule without changing the layout. If you change `--u` or 
 those values.
 
 Each sheet's height is a whole number of lines because everything on it is.
+
+## Readable by machines too
+
+Applicant tracking systems parse the PDF you upload, not this site, so `assets/Bhushan_Ladde_Resume.pdf`
+is what goes into applications. The site is still built to read cleanly for search engines, LinkedIn and
+email link previews, and recruiter or AI tools that summarize a page:
+- **Hidden separators.** Pieces that sit side by side on screen (job title and dates, table cells, the big
+  highlight numbers) have an invisible `<i class="sep"> | </i>` between them, so copied or scraped text
+  reads "Nielsen Holdings | Mar 2022 – Jul 2026" rather than fusing. They are `<i>`, not `<span>`, so
+  layout selectors never count them; table rules use `:nth-of-type` for the same reason.
+- **Structured data.** A schema.org `Person` block (JSON-LD in the `<head>`) gives name, title, email, phone,
+  location, LinkedIn/GitHub, schools, skills, roles and awards.
+- **Link previews.** Open Graph and Twitter tags (title, description, photo) plus a canonical link, so the
+  URL shows as a card with my photo when pasted into LinkedIn, Slack or email. These need `site_url` in
+  `profile.json` to build absolute links.
+
+After changing anything here, check how LinkedIn sees the page with its Post Inspector
+(https://www.linkedin.com/post-inspector/); it also refreshes LinkedIn's cached preview.
 
 ## Publishing on GitHub Pages
 
